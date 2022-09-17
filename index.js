@@ -65,6 +65,12 @@ tryPlaying = (res) => {
   } catch { exec('kill 1') }
 };
 
+/* 
+   Bot Coded by Adios#4891
+   fn-aman-20 on GitHub
+   bit.ly/fantellive
+*/
+
 client.on('ready', async () => {
   const channel = await client.channels.fetch(main.channel);
   setInterval(() => {
