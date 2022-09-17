@@ -31,8 +31,8 @@ module.exports = {
       url: 'https://streams.ilovemusic.de/iloveradio15.mp3'
     },
     {
-      topic: 'I Love Chill Hop',
-      url: 'https://streams.ilovemusic.de/iloveradio17.mp3'
+      topic: 'I Love Music & Chill',
+      url: 'https://streams.ilovemusic.de/iloveradio10.mp3'
     },
     {
       topic: 'I Love Greatest Hits',
