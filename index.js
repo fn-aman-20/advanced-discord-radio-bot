@@ -128,7 +128,7 @@ client.on('ready', async () => {
     }]
   };
   if (presence.type === ActivityType.Streaming) {
-    activity.url = presence.url || 'https://twitch.tv/nocopyrightsounds';
+    activity.activities[0].url = presence.url || 'https://twitch.tv/nocopyrightsounds';
   } else activity.status = typeof presence.status === 'string' ? presence.status : 'idle';
   client.user.setPresence(activity);
 });
