@@ -22,3 +22,5 @@ On free [bot-hosting.net](https://bot-hosting.net/), 100% working
 * Supported streams: direct links
 * Why direct-only? streaming from other sources such as soundcloud or youtube is not so safe on Discord, the stream links generated may also take a pause causing the bot to reboot more often
 * You can play any direct stream, I use [ilovemusic.de](https://ilovemusic.de/streams/)
+
+Lastly, you're free to use, share, and modify this project, as long as you give proper credits to the developer!
