@@ -78,7 +78,7 @@ client.once('ready', async () => {
     const source = sources[Math.floor(Math.random() * sources.length)];
     if (channel.type === ChannelType.GuildStageVoice) {
       setTopic(channel, source.topic);
-      await channel.guild.members.me.voice.setSuppressed(false);
+      if (channel.guild.members.me.voice?.suppress) await channel.guild.members.me.voice.setSuppressed(false);
     }
     player.play(res(source.url));
     setTimeout(() => radio.emit('play', config.sources), config.interval);
