@@ -1,7 +1,7 @@
 # Meet the god of streaming!
 ## Compatibility
 Tested on Replit, without hacker plan ([freshping](https://freshping.io/)), 100% working
-* RAM: 1024MB
+* RAM: 512MB
 * ROM: 1024MB
 
 On free [bot-hosting.net](https://bot-hosting.net/), 100% working
