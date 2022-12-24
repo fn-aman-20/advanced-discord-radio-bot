@@ -13,7 +13,10 @@ const {
   createAudioResource
 } = require('@discordjs/voice'),
 config = require('./util/config'),
-{ EventEmitter } = require('events');
+{ EventEmitter } = require('events'),
+fetch = (...args) => import('node-fetch')
+  .then(({ default: fetch }) => fetch(...args)),
+cheerio = require('cheerio');
 
 const client = new Client({
   intents: [
@@ -21,9 +24,9 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates
   ],
   presence: config.status
-}),
-radio = new EventEmitter(),
-player = createAudioPlayer({
+}), radio = new EventEmitter();
+
+const player = createAudioPlayer({
   behaviors: {
     noSubscriber: 'play'
   }
@@ -46,9 +49,9 @@ join = (channel) => {
     }
   });
   return connection;
-},
-res = (...args) => createAudioResource(...args),
-setTopic = (channel, topic) => {
+}, res = (...args) => createAudioResource(...args);
+
+const setTopic = (channel, topic) => {
   if (channel.stageInstance?.topic === topic) return;
   channel.guild.stageInstances.fetch(channel.id)
   .then(i => {
@@ -64,26 +67,54 @@ setTopic = (channel, topic) => {
       privacyLevel: 1
     });
   });
-};
-
-player.on('error', () => radio.emit('play'));
-player.on('stateChange', (previous, current) => {
-  if (previous.status === 'playing' && current.status !== 'playing') radio.emit('play', config.sources);
+},
+streams = () => new Promise((resolve, reject) => {
+  fetch('https://ilovemusic.de/streams')
+  .then(raw => raw.text()
+  .then(body => {
+    const $ = cheerio.load(body), list = [];
+    $('.content').each((i, content) => {
+      const stream = $(content),
+      text = stream.text().trim().split(`\n`),
+      title = text.shift(),
+      url = text.pop()?.trim()?.split(' ')?.pop();
+      if (!title || !url) return;
+      list.push({
+        topic: title,
+        url: url
+      });
+    });
+    resolve(list);
+  })
+  .catch(err => reject(err)))
+  .catch(err => reject(err));
 });
 
 client.once('ready', async () => {
+  const sources = await streams();
+  if (!sources) return;
   const channel = await client.channels.fetch(config.channel);
   join(channel);
+
+  player.on('error', () => radio.emit('play'));
+  player.on('stateChange', (previous, current) => {
+    if (previous.status === 'playing' && current.status !== 'playing') {
+      radio.emit('play', sources);
+    }
+  });
+  
   radio.on('play', async (sources) => {
     const source = sources[Math.floor(Math.random() * sources.length)];
     if (channel.type === ChannelType.GuildStageVoice) {
       setTopic(channel, source.topic);
-      if (channel.guild.members.me.voice?.suppress) await channel.guild.members.me.voice.setSuppressed(false);
+      if (channel.guild.members.me.voice?.suppress) {
+        await channel.guild.members.me.voice.setSuppressed(false);
+      }
     }
     player.play(res(source.url));
-    setTimeout(() => radio.emit('play', config.sources), config.interval);
+    setTimeout(() => radio.emit('play', sources), config.interval);
   });
-  radio.emit('play', config.sources);
+  radio.emit('play', sources);
 });
 
 config.onboot(client, config.auth);
