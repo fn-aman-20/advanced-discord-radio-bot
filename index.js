@@ -94,16 +94,17 @@ client.once('ready', async () => {
   const sources = await streams();
   if (!sources) return;
   const channel = await client.channels.fetch(config.channel);
-  join(channel);
+  let timeout, connection = join(channel);
 
-  player.on('error', () => radio.emit('play'));
+  player.on('error', () => radio.emit('play', sources));
   player.on('stateChange', (previous, current) => {
-    if (previous.status === 'playing' && current.status !== 'playing') {
+    if (previous.status === 'playing' && current.status === 'idle') {
       radio.emit('play', sources);
     }
   });
   
   radio.on('play', async (sources) => {
+    if (timeout) clearTimeout(timeout);
     const source = sources[Math.floor(Math.random() * sources.length)];
     if (channel.type === ChannelType.GuildStageVoice) {
       setTopic(channel, source.topic);
@@ -112,7 +113,7 @@ client.once('ready', async () => {
       }
     }
     player.play(res(source.url));
-    setTimeout(() => radio.emit('play', sources), config.interval);
+    timeout = setTimeout(() => radio.emit('play', sources), config.interval);
   });
   radio.emit('play', sources);
 });
