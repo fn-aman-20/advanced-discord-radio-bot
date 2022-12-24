@@ -1,4 +1,4 @@
-# Meet the god of streaming!
+# Discord Radio Bot
 ## Compatibility
 Tested on Replit, without hacker plan ([freshping](https://freshping.io/)), 100% working
 * RAM: 512MB
@@ -21,6 +21,15 @@ On free [bot-hosting.net](https://bot-hosting.net/), 100% working
 ![Stream Switch](https://cdn.discordapp.com/attachments/926364390062686238/1020586194888835082/stream.gif)
 * Supported streams: direct links
 * Why direct-only? streaming from other sources such as soundcloud or youtube is not so safe on Discord, the stream links generated may also take a pause causing the bot to reboot more often
-* You can play any direct stream, I use [ilovemusic.de](https://ilovemusic.de/streams/)
+* You can play any direct stream, just put all your source objects instead of `await streams()`, I use [ilovemusic.de](https://ilovemusic.de/streams/)
+Sample source:
+```js
+const sources = [
+  {
+    topic: 'Some stream topic for stage channels',
+    url: 'https:/streams.website.com/stream99.mp3'
+  }
+]
+```
 
 Lastly, you're free to use, share, and modify this project, as long as you give proper credits to the developer!
