@@ -2,7 +2,7 @@ require('colors').enable();
 const { exec } = require('child_process'),
 time = () => {
   const a = new Date(),
-  b = new Date(a.getTime() + (330 /* replace this with your local time in minutes */ + a.getTimezoneOffset()) * 60 * 1000),
+  b = new Date(a.getTime() + (330 /* 5hrs 30mins ahead of UTC (India); replace this with yours */ + a.getTimezoneOffset()) * 60 * 1000),
   hours = (b.getHours() >= 10) ? `${b.getHours()}` : `0${b.getHours()}`,
   minutes = (b.getMinutes() >= 10) ? `${b.getMinutes()}` : `0${b.getMinutes()}`,
   seconds = (b.getSeconds() >= 10) ? `${b.getSeconds()}` : `0${b.getSeconds()}`;
