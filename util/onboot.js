@@ -1,7 +1,7 @@
 require('colors').enable();
 const process = require('process'),
 { EventEmitter } = require('events'),
-// { spawn } = require('child_process'),
+// { exec, spawn } = require('child_process'),
 check = new EventEmitter(),
 time = () => {
   const a = new Date(),
@@ -13,8 +13,7 @@ time = () => {
 };
 
 // Do this only if you know about it
-// if you use replit, consider using exec('kill 1') and freshping instead
-// please read https://github.com/fn-aman-20/discord-anticrash#readme
+// if you use replit, consider using exec('kill 1') and freshping.io instead
 /*
 process.on('exit', () => {
   spawn(process.argv.shift(), process.argv, {
