@@ -1,7 +1,7 @@
 require('colors').enable();
 const process = require('process'),
 { EventEmitter } = require('events'),
-{ spawn } = require('child_process'),
+// { spawn } = require('child_process'),
 check = new EventEmitter(),
 time = () => {
   const a = new Date(),
