@@ -1,6 +1,7 @@
 require('colors').enable();
-const { exec } = require('child_process'),
+const process = require('process'),
 { EventEmitter } = require('events'),
+{ spawn } = require('child_process'),
 check = new EventEmitter(),
 time = () => {
   const a = new Date(),
@@ -11,38 +12,46 @@ time = () => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+// Warning: please read https://github.com/fn-aman-20/discord-anticrash#readme
+process.on('exit', () => {
+  spawn(process.argv.shift(), process.argv, {
+    detached: true,
+    stdio: 'inherit'
+  });
+});
+
 module.exports = function onboot(client, token) {
   client.once('shardReady', (id, na) => {
     console.log(`[${time()}] :: connected :: [shard#${id}]`.rainbow);
     if (na) console.log('  unavailable Guild', na);
   });
   client.on('shardDisconnect', (event, id) => {
-    if (!client.isReady()) exec('kill 1');
+    if (!client.isReady()) process.kill(process.pid);
     else console.log(`[${time()}] :: disconnected :: [shard#${id}]`.yellow);
   });
   client.on('shardResume', (id, no) => {
-    if (!client.isReady()) exec('kill 1');
+    if (!client.isReady()) process.kill(process.pid);
     else console.log(`[${time()}] :: reconnected ${no > 1 ? 'after' : 'in'} ${no} attempt${no > 1 ? 's' : ''} :: [shard#${id}]`.blue);
   });
   client.on('shardError', (error, id) => {
-    if (!client.isReady()) exec('kill 1');
+    if (!client.isReady()) process.kill(process.pid);
     else console.log(`[${time()}] :: error connecting :: [shard#${id}]\n`.red, error);
   });
   client.on('warn', warning => {
-    if (!client.isReady()) exec('kill 1');
+    if (!client.isReady()) process.kill(process.pid);
     else console.log(`[${time()}] :: warning :: [client]\n`.yellow, warning);
   });
   client.on('error', error => {
-    if (!client.isReady()) exec('kill 1');
+    if (!client.isReady()) process.kill(process.pid);
     else console.log(`[${time()}] :: error :: [client]\n`.red, error);
   });
   
   client.login(token);
   check.on('login', () => {
     setTimeout(() => {
-      if (!client.isReady()) exec('kill 1');
+      if (!client.isReady()) process.kill(process.pid);
       else check.emit('login');
-    }, 5_000);
+    }, 60_000);
   });
   check.emit('login');
   
