@@ -91,10 +91,8 @@ streams = () => new Promise((resolve, reject) => {
 });
 
 client.once('ready', async () => {
-  const sources = await streams();
+  let sources = await streams(), timeout;
   if (!sources) return;
-  let channel = await client.channels.fetch(config.channel),
-  timeout, connection = join(channel);
 
   player.on('error', () => radio.emit('play', sources));
   player.on('stateChange', (previous, current) => {
@@ -105,8 +103,9 @@ client.once('ready', async () => {
   
   radio.on('play', async (sources) => {
     if (timeout) clearTimeout(timeout);
+    const source = sources[Math.floor(Math.random() * sources.length)],
     channel = await client.channels.fetch(config.channel);
-    const source = sources[Math.floor(Math.random() * sources.length)];
+    join(channel);
     if (channel.type === ChannelType.GuildStageVoice) {
       setTopic(channel, source.topic);
       if (channel.guild.members.me.voice?.suppress) {
